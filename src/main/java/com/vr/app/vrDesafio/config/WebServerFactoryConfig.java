@@ -11,6 +11,6 @@ public class WebServerFactoryConfig {
     @Bean
     public WebServerFactoryCustomizer<ConfigurableServletWebServerFactory>
     webServerFactoryCustomizer() {
-        return factory -> factory.setContextPath("/vr/v1");
+        return factory -> factory.setContextPath("/vr");
     }
 }

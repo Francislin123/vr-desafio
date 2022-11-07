@@ -22,10 +22,10 @@
 - -Dspring.profiles.active=test
 
 ### Documentation for API (Swagger)
-- Link for local access: http://localhost:8080/vr/v1/swagger-ui.html#/
+- Link for local access: http://localhost:8080/vr/swagger-ui/index.html
 
 ### Link for Git API 
 - https://github.com/Francislin123/vr-desafio.git
 
-### Deploy to Heroku
-- Link: https://jtemporal.com/deploy-flask-heroku/
+### H2
+- Link: http://localhost:8080/vr/h2/login.jsp?jsessionid=c4f0dcc4975b872b21d3d9950c1719f5
