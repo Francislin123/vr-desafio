@@ -16,9 +16,8 @@ import java.util.UUID;
 public class CardEntity {
 
     @Id
-    @GeneratedValue(generator = "tab_card_uuid_generator")
-    @GenericGenerator(name = "tab_card_uuid_generator", strategy = "uuid2")
-    private UUID id;
+    @GeneratedValue
+    private Long id;
 
     @Column(name = "card_password")
     private String password;
@@ -35,20 +34,10 @@ public class CardEntity {
     }
 
     @Builder
-    public CardEntity(UUID id, String password, String cardNumber, Double cardBalance) {
+    public CardEntity(Long id, String password, String cardNumber, Double cardBalance) {
         this.id = id;
         this.password = password;
         this.cardNumber = cardNumber;
         this.cardBalance = cardBalance;
-    }
-
-    @Override
-    public String toString() {
-        return "CardEntity{" +
-                "id=" + id +
-                ", password='" + password + '\'' +
-                ", cardNumber='" + cardNumber + '\'' +
-                ", cardBalance='" + cardBalance + '\'' +
-                '}';
     }
 }

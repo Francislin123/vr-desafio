@@ -28,4 +28,4 @@
 - https://github.com/Francislin123/vr-desafio.git
 
 ### H2
-- Link: http://localhost:8080/vr/h2/login.jsp?jsessionid=c4f0dcc4975b872b21d3d9950c1719f5
+- Link: http://localhost:8080/vr/h2

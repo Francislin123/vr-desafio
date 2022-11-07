@@ -1,5 +1,6 @@
 package com.vr.app.vrDesafio.service;
 
+import com.vr.app.vrDesafio.controller.request.CardBalanceRequest;
 import com.vr.app.vrDesafio.controller.request.CardRequest;
 import com.vr.app.vrDesafio.controller.response.CardResponse;
 import com.vr.app.vrDesafio.repository.CardRepository;
@@ -36,14 +37,35 @@ public class CardFlowServiceImpl implements CardFlowService {
 
     @Override
     public double checkingCardBalance(String cardNumber) {
-
         final CardEntity card = cardRepository.findByCardNumber(cardNumber);
-
         if (Objects.isNull(card)) {
             return 0.0;
         }
-
         return card.getCardBalance();
+    }
+
+    @Override
+    public String performTransaction(final CardBalanceRequest cardBalanceRequest) {
+
+        final CardEntity card = cardRepository.findByCardNumber(cardBalanceRequest.getCardNumber());
+
+        if (card != null) {
+            return validateBalanceAndPassword(card, cardBalanceRequest);
+        }
+
+        return null;
+    }
+
+    private String validateBalanceAndPassword(final CardEntity card, final CardBalanceRequest cardBalanceRequest) {
+        if (card.getPassword().equals(cardBalanceRequest.getPassword())) {
+            final boolean validationBalance = cardBalanceValidation(cardBalanceRequest.getCardBalance(), card);
+            if (!validationBalance) {
+               return "SALDO_INSUFICIENTE";
+            } else {
+                return "SENHA_INVALIDA";
+            }
+        }
+        return null;
     }
 
     private void persistCard(CardEntity cardEntity) {
@@ -52,14 +74,18 @@ public class CardFlowServiceImpl implements CardFlowService {
         log.info("cardEntity={} message=insert_successfully", card);
     }
 
-    private boolean cardBalanceValidation(final double cardBalance,
-                                          final double AmountToWithdraw,
+    private boolean cardBalanceValidation(final Double amountToWithdraw,
                                           final CardEntity cardEntity) {
-        if (cardBalance < AmountToWithdraw) return false;
+        if (cardEntity.getCardBalance() < amountToWithdraw) return false;
         else {
-            final double balance = cardBalance - AmountToWithdraw;
-            cardEntity.setCardBalance(balance);
-            this.persistCard(cardEntity);
+            Double cardBalance = cardEntity.getCardBalance() - amountToWithdraw;
+            final CardEntity entity = CardEntity.builder()
+                    .id(cardEntity.getId())
+                    .cardNumber(cardEntity.getCardNumber())
+                    .password(cardEntity.getPassword())
+                    .cardBalance(cardBalance)
+                    .build();
+            cardRepository.saveAndFlush(entity);
             return true;
         }
     }

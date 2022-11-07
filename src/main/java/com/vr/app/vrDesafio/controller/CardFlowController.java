@@ -1,5 +1,6 @@
 package com.vr.app.vrDesafio.controller;
 
+import com.vr.app.vrDesafio.controller.request.CardBalanceRequest;
 import com.vr.app.vrDesafio.controller.request.CardRequest;
 import com.vr.app.vrDesafio.controller.response.CardResponse;
 import com.vr.app.vrDesafio.service.CardFlowService;
@@ -15,6 +16,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.Objects;
 
 @Api
 @RestController
@@ -56,5 +58,22 @@ public class CardFlowController {
         }
 
         return new ResponseEntity<>(balance, new HttpHeaders(), HttpStatus.OK);
+    }
+
+    @ApiOperation(value = "Created and validate card", consumes = MediaType.APPLICATION_JSON_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    @ApiResponses(value = {
+            @ApiResponse(code = 201, message = "Card created successfully", response = ResponseEntity.class),
+            @ApiResponse(code = 422, message = "If the card already exists")})
+    @RequestMapping(path = "/transactions", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<String> performTransaction(@Valid @RequestBody CardBalanceRequest cardBalanceRequest) {
+
+        final String response = cardFlowService.performTransaction(cardBalanceRequest);
+
+        if (response != null) {
+            return new ResponseEntity<>(response, new HttpHeaders(), HttpStatus.UNPROCESSABLE_ENTITY);
+        }
+
+        return new ResponseEntity<>(null, new HttpHeaders(), HttpStatus.OK);
     }
 }
