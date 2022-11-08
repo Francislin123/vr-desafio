@@ -2,6 +2,7 @@ package com.vr.app.vrDesafio.service;
 
 import com.vr.app.vrDesafio.controller.request.CardBalanceRequest;
 import com.vr.app.vrDesafio.controller.request.CardRequest;
+import com.vr.app.vrDesafio.controller.response.BalanceResponse;
 import com.vr.app.vrDesafio.controller.response.CardResponse;
 import com.vr.app.vrDesafio.repository.CardRepository;
 import com.vr.app.vrDesafio.repository.card.CardEntity;
@@ -20,14 +21,10 @@ public class CardFlowServiceImpl implements CardFlowService {
 
     @Override
     public CardResponse createdCard(CardRequest cardRequest) {
-
-        final CardResponse cardResponse = CardResponse.builder()
+        this.persistCard(getBuildCard(cardRequest));
+        return CardResponse.builder()
                 .password(cardRequest.getPassword())
                 .cardNumber(cardRequest.getCardNumber()).build();
-
-        this.persistCard(getBuildCard(cardRequest));
-
-        return cardResponse;
     }
 
     @Override
@@ -36,12 +33,12 @@ public class CardFlowServiceImpl implements CardFlowService {
     }
 
     @Override
-    public double checkingCardBalance(String cardNumber) {
+    public BalanceResponse checkingCardBalance(String cardNumber) {
         final CardEntity card = cardRepository.findByCardNumber(cardNumber);
         if (Objects.isNull(card)) {
-            return 0.0;
+            return BalanceResponse.builder().cardBalance(0.0).cardNumber("").build();
         }
-        return card.getCardBalance();
+        return BalanceResponse.builder().cardBalance(card.getCardBalance()).cardNumber(card.getCardNumber()).build();
     }
 
     @Override
@@ -69,15 +66,17 @@ public class CardFlowServiceImpl implements CardFlowService {
     }
 
     private void persistCard(CardEntity cardEntity) {
-        cardEntity.setCardBalance(500.0);
         CardEntity card = cardRepository.saveAndFlush(cardEntity);
         log.info("cardEntity={} message=insert_successfully", card);
     }
 
-    private boolean cardBalanceValidation(final Double amountToWithdraw,
-                                          final CardEntity cardEntity) {
-        if (cardEntity.getCardBalance() < amountToWithdraw) return false;
-        else {
+    private boolean cardBalanceValidation(final Double amountToWithdraw, final CardEntity cardEntity) {
+
+        if (isNegative(amountToWithdraw)) return false;
+
+        if (cardEntity.getCardBalance() < amountToWithdraw)
+            return false;
+         else {
             Double cardBalance = cardEntity.getCardBalance() - amountToWithdraw;
             final CardEntity entity = CardEntity.builder()
                     .id(cardEntity.getId())
@@ -88,6 +87,10 @@ public class CardFlowServiceImpl implements CardFlowService {
             cardRepository.saveAndFlush(entity);
             return true;
         }
+    }
+
+    private boolean isNegative(double cardBalance) {
+        return Double.doubleToRawLongBits(cardBalance) < 0;
     }
 
     private CardEntity getBuildCard(CardRequest cardRequest) {

@@ -2,6 +2,7 @@ package com.vr.app.vrDesafio.controller;
 
 import com.vr.app.vrDesafio.controller.request.CardBalanceRequest;
 import com.vr.app.vrDesafio.controller.request.CardRequest;
+import com.vr.app.vrDesafio.controller.response.BalanceResponse;
 import com.vr.app.vrDesafio.controller.response.CardResponse;
 import com.vr.app.vrDesafio.service.CardFlowService;
 import io.swagger.annotations.Api;
@@ -16,7 +17,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.Objects;
 
 @Api
 @RestController
@@ -48,16 +48,16 @@ public class CardFlowController {
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Balance on the card", response = ResponseEntity.class),
             @ApiResponse(code = 404, message = "If the card does not exist")})
-    @RequestMapping(value = "{cardNumber}", method = RequestMethod.PATCH, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity checkingCardBalance(@PathVariable("cardNumber") String cardNumber) {
+    @RequestMapping(value = "{cardNumber}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Double> checkingCardBalance(@PathVariable("cardNumber") String cardNumber) {
 
-        final var balance = cardFlowService.checkingCardBalance(cardNumber);
+        final BalanceResponse responseBalance = cardFlowService.checkingCardBalance(cardNumber);
 
-        if (balance < 0.0) {
+        if (responseBalance.getCardNumber().equals("")) {
             return new ResponseEntity<>(null, new HttpHeaders(), HttpStatus.NOT_FOUND);
         }
 
-        return new ResponseEntity<>(balance, new HttpHeaders(), HttpStatus.OK);
+        return new ResponseEntity<>(responseBalance.getCardBalance(), new HttpHeaders(), HttpStatus.OK);
     }
 
     @ApiOperation(value = "Created and validate card", consumes = MediaType.APPLICATION_JSON_VALUE,
