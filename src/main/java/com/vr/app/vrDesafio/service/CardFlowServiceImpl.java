@@ -6,6 +6,7 @@ import com.vr.app.vrDesafio.controller.response.BalanceResponse;
 import com.vr.app.vrDesafio.controller.response.CardResponse;
 import com.vr.app.vrDesafio.repository.CardRepository;
 import com.vr.app.vrDesafio.repository.card.CardEntity;
+import com.vr.app.vrDesafio.util.TypesAnswersEnum;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -50,7 +51,7 @@ public class CardFlowServiceImpl implements CardFlowService {
             return this.validateBalanceAndPassword(card, cardBalanceRequest);
         }
 
-        return "CARTAO_INEXISTENTE";
+        return TypesAnswersEnum.CARD_NON_EXISTENT.getTypesAnswersEnum();
     }
 
     private String validateBalanceAndPassword(final CardEntity card, final CardBalanceRequest cardBalanceRequest) {
@@ -59,10 +60,10 @@ public class CardFlowServiceImpl implements CardFlowService {
             if (validationBalance) {
                return null;
             } else {
-                return "SALDO_INSUFICIENTE";
+                return TypesAnswersEnum.INSUFFICIENT_FUNDS.getTypesAnswersEnum();
             }
         }
-        return "SENHA_INVALIDA";
+        return TypesAnswersEnum.INVALID_PASSWORD.getTypesAnswersEnum();
     }
 
     private void persistCard(final CardEntity cardEntity) {
