@@ -53,7 +53,7 @@ public class CardFlowController {
 
         final var balance = cardFlowService.checkingCardBalance(cardNumber);
 
-        if (balance <= 0.0) {
+        if (balance < 0.0) {
             return new ResponseEntity<>(null, new HttpHeaders(), HttpStatus.NOT_FOUND);
         }
 

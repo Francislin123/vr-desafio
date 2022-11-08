@@ -53,19 +53,19 @@ public class CardFlowServiceImpl implements CardFlowService {
             return validateBalanceAndPassword(card, cardBalanceRequest);
         }
 
-        return null;
+        return "CARTAO_INEXISTENTE";
     }
 
     private String validateBalanceAndPassword(final CardEntity card, final CardBalanceRequest cardBalanceRequest) {
         if (card.getPassword().equals(cardBalanceRequest.getPassword())) {
             final boolean validationBalance = cardBalanceValidation(cardBalanceRequest.getCardBalance(), card);
-            if (!validationBalance) {
-               return "SALDO_INSUFICIENTE";
+            if (validationBalance) {
+               return null;
             } else {
-                return "SENHA_INVALIDA";
+                return "SALDO_INSUFICIENTE";
             }
         }
-        return null;
+        return "SENHA_INVALIDA";
     }
 
     private void persistCard(CardEntity cardEntity) {
