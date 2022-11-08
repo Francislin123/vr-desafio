@@ -21,20 +21,20 @@ public class CardFlowServiceImpl implements CardFlowService {
 
     @Override
     public CardResponse createdCard(CardRequest cardRequest) {
-        this.persistCard(getBuildCard(cardRequest));
+        this.persistCard(this.getBuildCard(cardRequest));
         return CardResponse.builder()
                 .password(cardRequest.getPassword())
                 .cardNumber(cardRequest.getCardNumber()).build();
     }
 
     @Override
-    public boolean cardValidation(CardRequest cardRequest) {
-        return Objects.isNull(cardRepository.findByCardNumber(cardRequest.getCardNumber()));
+    public boolean cardValidation(final CardRequest cardRequest) {
+        return Objects.isNull(this.cardRepository.findByCardNumber(cardRequest.getCardNumber()));
     }
 
     @Override
-    public BalanceResponse checkingCardBalance(String cardNumber) {
-        final CardEntity card = cardRepository.findByCardNumber(cardNumber);
+    public BalanceResponse checkingCardBalance(final String cardNumber) {
+        final CardEntity card = this.cardRepository.findByCardNumber(cardNumber);
         if (Objects.isNull(card)) {
             return BalanceResponse.builder().cardBalance(0.0).cardNumber("").build();
         }
@@ -44,10 +44,10 @@ public class CardFlowServiceImpl implements CardFlowService {
     @Override
     public String performTransaction(final CardBalanceRequest cardBalanceRequest) {
 
-        final CardEntity card = cardRepository.findByCardNumber(cardBalanceRequest.getCardNumber());
+        final CardEntity card = this.cardRepository.findByCardNumber(cardBalanceRequest.getCardNumber());
 
         if (card != null) {
-            return validateBalanceAndPassword(card, cardBalanceRequest);
+            return this.validateBalanceAndPassword(card, cardBalanceRequest);
         }
 
         return "CARTAO_INEXISTENTE";
@@ -55,7 +55,7 @@ public class CardFlowServiceImpl implements CardFlowService {
 
     private String validateBalanceAndPassword(final CardEntity card, final CardBalanceRequest cardBalanceRequest) {
         if (card.getPassword().equals(cardBalanceRequest.getPassword())) {
-            final boolean validationBalance = cardBalanceValidation(cardBalanceRequest.getCardBalance(), card);
+            final boolean validationBalance = this.cardBalanceValidation(cardBalanceRequest.getCardBalance(), card);
             if (validationBalance) {
                return null;
             } else {
@@ -65,35 +65,34 @@ public class CardFlowServiceImpl implements CardFlowService {
         return "SENHA_INVALIDA";
     }
 
-    private void persistCard(CardEntity cardEntity) {
-        CardEntity card = cardRepository.saveAndFlush(cardEntity);
+    private void persistCard(final CardEntity cardEntity) {
+        CardEntity card = this.cardRepository.saveAndFlush(cardEntity);
         log.info("cardEntity={} message=insert_successfully", card);
     }
 
     private boolean cardBalanceValidation(final Double amountToWithdraw, final CardEntity cardEntity) {
 
-        if (isNegative(amountToWithdraw)) return false;
+        if (this.isNegative(amountToWithdraw)) return false;
 
         if (cardEntity.getCardBalance() < amountToWithdraw)
             return false;
          else {
-            Double cardBalance = cardEntity.getCardBalance() - amountToWithdraw;
-            final CardEntity entity = CardEntity.builder()
+            final Double cardBalance = cardEntity.getCardBalance() - amountToWithdraw;
+            cardRepository.saveAndFlush(CardEntity.builder()
                     .id(cardEntity.getId())
                     .cardNumber(cardEntity.getCardNumber())
                     .password(cardEntity.getPassword())
                     .cardBalance(cardBalance)
-                    .build();
-            cardRepository.saveAndFlush(entity);
+                    .build());
             return true;
         }
     }
 
-    private boolean isNegative(double cardBalance) {
+    private boolean isNegative(final double cardBalance) {
         return Double.doubleToRawLongBits(cardBalance) < 0;
     }
 
-    private CardEntity getBuildCard(CardRequest cardRequest) {
+    private CardEntity getBuildCard(final CardRequest cardRequest) {
         return CardEntity.builder()
                 .cardNumber(cardRequest.getCardNumber())
                 .password(cardRequest.getPassword())

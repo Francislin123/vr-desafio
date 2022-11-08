@@ -29,3 +29,24 @@
 
 ### H2
 - Link: http://localhost:8080/vr/h2
+
+### URL Test application
+
+{
+"cardNumber": "6549873025634501",
+"password": "1234"
+}
+
+{
+"cardNumber": "6549873025634501",
+"password": "1234",
+"cardBalance": 10.00
+}
+
+curl -X POST "http://localhost:8080/vr/cards" -H "accept: */*" -H "Content-Type: application/json" -d "{ \"cardNumber\": \"6549873025634501\", \"password\": \"1234\"}"
+
+
+curl -X GET "http://localhost:8080/vr/6549873025634500" -H "accept: application/json"
+
+
+curl -X POST "http://localhost:8080/vr/transactions" -H "accept: */*" -H "Content-Type: application/json" -d "{ \"cardNumber\": \"6549873025634501\", \"password\": \"1234\", \"cardBalance\": 500.00}"
