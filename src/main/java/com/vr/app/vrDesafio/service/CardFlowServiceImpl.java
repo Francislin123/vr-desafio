@@ -43,7 +43,7 @@ public class CardFlowServiceImpl implements CardFlowService {
     }
 
     @Override
-    public String performTransaction(final CardBalanceRequest cardBalanceRequest) {
+    public String carryOutTransaction(final CardBalanceRequest cardBalanceRequest) {
 
         final CardEntity card = this.cardRepository.findByCardNumber(cardBalanceRequest.getCardNumber());
 

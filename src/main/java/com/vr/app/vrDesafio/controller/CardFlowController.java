@@ -68,7 +68,7 @@ public class CardFlowController {
     @RequestMapping(path = "/transactions", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<String> performTransaction(@Valid @RequestBody CardBalanceRequest cardBalanceRequest) {
 
-        final String response = cardFlowService.performTransaction(cardBalanceRequest);
+        final String response = cardFlowService.carryOutTransaction(cardBalanceRequest);
 
         if (response != null) {
             return new ResponseEntity<>(response, new HttpHeaders(), HttpStatus.UNPROCESSABLE_ENTITY);

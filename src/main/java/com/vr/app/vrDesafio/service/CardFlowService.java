@@ -12,5 +12,5 @@ public interface CardFlowService {
 
     BalanceResponse checkingCardBalance(String cardNumber);
 
-    String performTransaction(CardBalanceRequest cardBalanceRequest);
+    String carryOutTransaction(CardBalanceRequest cardBalanceRequest);
 }
