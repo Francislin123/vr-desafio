@@ -11,7 +11,7 @@
 - Hibernate Core 5.2.17.Final
 - H2 Data Base
 
-### To run the application just follow the steps below.
+### To run the application just follow the steps below
 
 - 1 - Enter the folder where the project jar is
 - 2 - Execute the following command by cmd
