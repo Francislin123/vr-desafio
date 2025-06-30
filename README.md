@@ -50,3 +50,6 @@ curl -X GET "http://localhost:8080/vr/6549873025634500" -H "accept: application/
 
 
 curl -X POST "http://localhost:8080/vr/transactions" -H "accept: */*" -H "Content-Type: application/json" -d "{ \"cardNumber\": \"6549873025634501\", \"password\": \"1234\", \"cardBalance\": 500.00}"
+
+### Arquitetura de solução baseada em AWS
+![Captura de Tela 2019-05-12 às 15 18 49](https://res.cloudinary.com/duep7y7ve/image/upload/v1751250157/nwfrjanhg42qqzyisaq3.png)
